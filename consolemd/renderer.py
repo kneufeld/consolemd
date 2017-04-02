@@ -44,10 +44,14 @@ class Renderer(object):
             fout.write(prefix)
 
             style_out = self.styler.dispatch(obj, entering)
-            fout.write(style_out)
-
             out = self.dispatch(obj, entering)
-            fout.write(out)
+
+            if entering:
+                fout.write(style_out)
+                fout.write(out)
+            else:
+                fout.write(out)
+                fout.write(style_out)
 
     def dispatch(self, obj, entering):
         try:
