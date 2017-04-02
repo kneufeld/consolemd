@@ -32,7 +32,7 @@ codes["fuscia"] = codes["fuchsia"]
 codes["white"] = codes["bold"]
 
 # Default mapping of #ansixxx to RGB colors.
-_ansimap = {
+ansicolors = {
     # dark
     '#ansiblack'     : '#000000',
     '#ansidarkred'   : '#7f0000',
@@ -47,13 +47,11 @@ _ansimap = {
     '#ansired'       : '#ff0000',
     '#ansigreen'     : '#00ff00',
     '#ansiyellow'    : '#ffff00',
-    '#ansiblue'      : '#0000ff',
+    '#ansiblue'      : '#6060ff',
     '#ansifuchsia'   : '#ff00ff',
     '#ansiturquoise' : '#00ffff',
     '#ansiwhite'     : '#ffffff',
 }
-ansicolors = set(_ansimap)
-
 
 def _build_color_table():
     # colors 0..15: 16 basic colors
@@ -97,6 +95,32 @@ def _build_color_table():
 
 xterm_colors = _build_color_table()
 
+def to_rgb(color):
+    if color[0] == '#':
+        color = color[1:]
+
+    color = int(color, 16)
+
+    r = (color >> 16) & 0xff
+    g = (color >> 8) & 0xff
+    b = color & 0xff
+
+    return r,g,b
+
+def from_rgb(r,g,b):
+    # hex() produces "0x08", we want just "08"
+    rgb = [hex(i)[2:].zfill(2) for i in [r,g,b]]
+    return "#" + "".join(rgb)
+
+def reshade( color, per):
+    if per == 1.0:
+        return color
+
+    r,g,b = to_rgb(color)
+    r,g,b = map( lambda c: int(c*per), [r,g,b] )
+    return from_rgb(r,g,b)
+
+
 class ColorMap(object):
     """
     Helper to generate colors based on rgb values
@@ -136,7 +160,7 @@ class ColorMap(object):
 
     def _color_index(self, color):
         if color in ansicolors:
-            color = _ansimap[color]
+            color = ansicolors[color]
 
         color = color[1:]
 

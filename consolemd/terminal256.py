@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from consolemd.colormap import codes, ansicolors, ColorMap
+from consolemd.colormap import ansicolors, ColorMap, to_rgb
 
-class EscapeSequence:
+class EscapeSequence(object):
     def __init__(self, fg=None, bg=None, bold=False, underline=False, italic=False, true_color=True):
         self.fg = fg
         self.bg = bg
@@ -23,10 +23,32 @@ class EscapeSequence:
                 self.fg or '', self.bg or '', self.bold, self.underline, self.italic
                 )
 
+    @property
+    def fg(self):
+        return self._fg
+
+    @fg.setter
+    def fg(self, color):
+        self._fg = ansicolors.get(color, color)
+
+    @property
+    def bg(self):
+        return self._bg
+
+    @bg.setter
+    def bg(self, color):
+        self._bg = ansicolors.get(color, color)
+
     def escape(self, attrs):
         if len(attrs):
             return "\x1b[" + ";".join(attrs) + "m"
         return ''
+
+    def ansi_lookup(self, color):
+        try:
+            return ansicolors[color]
+        except KeyError:
+            return None
 
     def low_color_string(self):
         attrs = []
@@ -53,12 +75,10 @@ class EscapeSequence:
     def true_color_string(self):
         attrs = []
         if self.fg:
-            from .style import Style
-            r,g,b = map(str, Style.to_rgb(self.fg))
+            r,g,b = map(str, to_rgb(self.fg))
             attrs.extend(("38", "2", r, g, b))
         if self.bg:
-            from .style import Style
-            r,g,b = map(str, Style.to_rgb(self.bg))
+            r,g,b = map(str, to_rgb(self.bg))
             attrs.extend(("48", "2", r, g, b))
         if self.bold:
             attrs.append("01")

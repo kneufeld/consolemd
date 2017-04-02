@@ -4,10 +4,9 @@ import pygments.styles
 import pygments.lexers
 import pygments.formatters
 from pygments import token
-from pygments.token import Keyword, Name, Comment, String, Error, Text, \
-     Number, Operator, Generic, Whitespace, Punctuation, Other, Literal
 
 from .terminal256 import EscapeSequence
+from .colormap import reshade
 
 import logging
 logger = logging.getLogger('consolemd.styler')
@@ -118,34 +117,6 @@ class Styler(object):
         return self.stack.pop()
 
     @staticmethod
-    def to_rgb(color):
-        if color[0] == '#':
-            color = color[1:]
-
-        color = int(color, 16)
-
-        r = (color >> 16) & 0xff
-        g = (color >> 8) & 0xff
-        b = color & 0xff
-
-        return r,g,b
-
-    @staticmethod
-    def from_rgb(r,g,b):
-        # hex() produces "0x08", we want just "08"
-        rgb = [hex(i)[2:].zfill(2) for i in [r,g,b]]
-        return "#" + "".join(rgb)
-
-    @staticmethod
-    def reshade( color, per):
-        if per == 1.0:
-            return color
-
-        r,g,b = Styler.to_rgb(color)
-        r,g,b = map( lambda c: int(c*per), [r,g,b] )
-        return Styler.from_rgb(r,g,b)
-
-    @staticmethod
     def stylize( eseq, text ):
         return "{}{}{}".format(eseq.color_string(), text, eseq.reset_string())
 
@@ -171,7 +142,7 @@ class Styler(object):
         if entering:
             level = 1 if obj.level is None else obj.level
             per = 1.0 - .05 * (level-1)
-            eseq.fg = Styler.reshade(color, per)
+            eseq.fg = reshade(color, per)
             return self.push(eseq).color_string()
         else:
             return self.pop().reset_string()
