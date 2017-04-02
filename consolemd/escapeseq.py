@@ -7,14 +7,16 @@ _true_color = True
 class EscapeSequence(object):
     def __init__(self,
             fg=None, bg=None,
-            bold=False, underline=False, italic=False, true_color=None
+            bold=False, underline=False, italic=False, true_color=None,
+            stream=None,
             ):
 
-        self.fg = fg
-        self.bg = bg
-        self.bold = bold
+        self.fg        = fg
+        self.bg        = bg
+        self.bold      = bold
         self.underline = underline
-        self.italic = italic
+        self.italic    = italic
+        self.stream    = None
 
         if true_color is None:
             true_color = _true_color
@@ -31,6 +33,13 @@ class EscapeSequence(object):
         return "<ESeq: {} {} {} {} {}>".format(
                 self.fg or '_', self.bg or '_', self.bold, self.underline, self.italic
                 )
+
+    def __enter__(self):
+        print "__enter__", repr(self)
+        self.stream.write( self.color_string() )
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.stream.write( self.reset_string() )
 
     @property
     def fg(self):

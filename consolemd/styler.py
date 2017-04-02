@@ -33,19 +33,14 @@ class Style(object):
 
         # each style has an entering value and an exiting value, None means reset
         self.styles = {
-            'document':     (None, None),
-            'paragraph':    (None, None),
-            'text':         (None, None),
-            'softbreak':    (None, None),
-            'linebreak':    (None, None),
-            'heading':      (f(token.Generic.Heading, solarized['heading']), None),
-            'emph':         (f(token.Generic.Emph, solarized['emph']), None),
-            'strong':       (f(token.Generic.Strong, solarized['strong']), None),
-            'link':         (f(token.Name.Entity, solarized['link']), None),
-            'image':        (f(token.Name.Entity, solarized['image']), None),
-            'code':         (f(token.String.Backtick, solarized['code']), None),
-            'block_quote':  (f(token.Generic.Emph, solarized['block_quote']), None),
-            'bullet':  (f(token.Literal, solarized['bullet']), None),
+            'heading':      (f(token.Generic.Heading , solarized['heading'])     , None) ,
+            'emph':         (f(token.Generic.Emph    , solarized['emph'])        , None) ,
+            'strong':       (f(token.Generic.Strong  , solarized['strong'])      , None) ,
+            'link':         (f(token.Name.Entity     , solarized['link'])        , None) ,
+            'image':        (f(token.Name.Entity     , solarized['image'])       , None) ,
+            'code':         (f(token.String.Backtick , solarized['code'])        , None) ,
+            'block_quote':  (f(token.Generic.Emph    , solarized['block_quote']) , None) ,
+            'bullet':       (f(token.Literal         , solarized['bullet'])      , None) ,
                 }
 
         #print self.styles
@@ -76,34 +71,51 @@ class Style(object):
                 )
 
     def entering(self, key):
-        try:
-            eseq = self.styles[key][0]
-        except KeyError:
-            return ''
-
-        if eseq is not None:
-            return eseq.color_string()
-
-        return ''
+        return self.styles.get(key, (None,None))[0] or EscapeSequence()
 
     def exiting(self, key):
-        try:
-            eseq = self.styles[key][1] or self.styles[key][0]
-        except KeyError:
-            return ''
-
-        if eseq is not None:
-            return eseq.reset_string()
-
-        return ''
+        return self.styles.get(key, (None,None))[1] or self.entering(key)
 
 
 class Styler(object):
 
-    def __init__(self, style_name):
-        self.stack = []
+    no_closing_node = [
+            'text', 'code', 'code_block',
+            'thematic_break', 'softbreak', 'linebreak',
+            ]
+
+    def __init__(self, stream, style_name):
+
+        self.stream = stream
         self.style_name = style_name
         self.style = Style(style_name)
+
+        self.stack = []
+
+    def cm(self, obj, entering):
+        self._curr_call = (obj, entering)
+        return self
+
+    def __enter__(self):
+        obj, entering = self._curr_call
+
+        if entering:
+            eseq = self.dispatch( obj, entering )
+            self.push( eseq )
+            self.stream.write( eseq.color_string() )
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        obj, entering = self._curr_call
+        # import pprint
+        # print entering, obj.t, pprint.pformat(obj.__dict__)
+
+        if not entering or obj.t in Styler.no_closing_node:
+            eseq = self.stack.pop()
+            self.stream.write( eseq.reset_string() )
+
+            if obj.t != 'document':
+                eseq = self.stack[-1]
+                self.stream.write( eseq.color_string() )
 
     def __getattr__(self, name):
         from functools import partial
@@ -121,6 +133,9 @@ class Styler(object):
         return "{}{}{}".format(eseq.color_string(), text, eseq.reset_string())
 
     def dispatch(self, obj, entering):
+        """
+        returns an EscapeSequence object
+        """
         try:
             handler = getattr(self, obj.t)
             return handler(obj, entering)
@@ -137,27 +152,23 @@ class Styler(object):
 
     def heading(self, obj, entering):
         # make each heading level a bit darker
-        eseq = self.style.styles['heading'][0]
+        eseq = self.style.entering('heading')
         color = eseq.fg
-        if entering:
-            level = 1 if obj.level is None else obj.level
-            per = 1.0 - .05 * (level-1)
-            eseq.fg = reshade(color, per)
-            return self.push(eseq).color_string()
-        else:
-            return self.pop().reset_string()
+
+        level = 1 if obj.level is None else obj.level
+        per = 1.0 - .05 * (level-1)
+        eseq.fg = reshade(color, per)
+        return eseq
 
     def code(self, obj, entering):
-        if entering:
-            eseq = self.style.styles['code'][0]
-            return self.push(eseq).color_string()
-        else:
-            assert False, "this shouldn't be called, ConsoleMD() is resetting this token"
+        eseq = self.style.entering('code')
+        return eseq
 
-    def bullet(self, bullet):
+    def bullet(self, obj, entering):
         """
         this is not an official markdown type, but it's how we colorize
         just the bullet/number of a list item
         """
-        eseq = self.style.styles['bullet'][0]
-        return Styler.stylize(eseq, bullet)
+        eseq = self.style.entering('bullet')
+        eseq.stream = self.stream
+        return eseq

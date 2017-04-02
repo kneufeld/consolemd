@@ -27,35 +27,33 @@ class Renderer(object):
 
         self.parser     = parser
         self.style_name = style_name
-        self.styler     = Styler(style_name)
         self.list_level = -1
         self.counters   = {}
 
-    def render(self, fout, md):
+    def render(self, stream, md):
         def debug_tag(obj, entering):
             if entering:
                 return "<{}>".format(obj.t)
             return "</{}>".format(obj.t)
 
+        self.stream = stream
+        self.styler = Styler( stream, self.style_name)
         ast = self.parser.parse( md )
 
         for obj, entering in ast.walker():
-            #logger.debug( debug_tag(obj, entering) )
 
-            prefix = self.prefix(obj, entering)
-            fout.write(prefix)
+            with self.styler.cm(obj, entering):
+                logger.debug( debug_tag(obj, entering) )
 
-            style_out = self.styler.dispatch(obj, entering)
-            out = self.dispatch(obj, entering)
+                prefix = self.prefix(obj, entering)
+                stream.write(prefix)
 
-            if entering:
-                fout.write(style_out)
-                fout.write(out)
-            else:
-                fout.write(out)
-                fout.write(style_out)
+                out = self.dispatch(obj, entering)
+                stream.write(out)
 
-            fout.flush()
+                stream.flush()
+
+        #print self.styler.stack
 
     def dispatch(self, obj, entering):
         try:
@@ -150,13 +148,17 @@ class Renderer(object):
             else:
                 bullet_char = obj.list_data.get('bullet_char') or '*' # -,+,*
 
-            return ' '*self.list_level*2 + self.styler.bullet(bullet_char) + ' '
+            text = ' '*self.list_level*2 + bullet_char + ' '
+            bullet = CommonMark.node.Node('bullet', None)
+            eseq = self.styler.dispatch(bullet, True)
+
+            return self.styler.stylize( eseq, text )
 
         return ''
 
     def code(self, obj, entering):
         # backticks
-        return obj.literal + self.styler.pop().reset_string()
+        return obj.literal
 
     def code_block(self, obj, entering):
         lang = obj.info or 'text'
