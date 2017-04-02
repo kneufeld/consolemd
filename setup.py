@@ -8,6 +8,7 @@ setup(
         'Click',
         'pygments',
         'setproctitle',
+        'commonmark',
     ],
     entry_points='''
         [console_scripts]

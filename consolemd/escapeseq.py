@@ -2,10 +2,12 @@
 
 from consolemd.colormap import ColorMap, to_rgb, ansicolors
 
+_true_color = True
+
 class EscapeSequence(object):
     def __init__(self,
             fg=None, bg=None,
-            bold=False, underline=False, italic=False, true_color=True
+            bold=False, underline=False, italic=False, true_color=None
             ):
 
         self.fg = fg
@@ -13,6 +15,9 @@ class EscapeSequence(object):
         self.bold = bold
         self.underline = underline
         self.italic = italic
+
+        if true_color is None:
+            true_color = _true_color
 
         if true_color:
             self.color_string = self.true_color_string

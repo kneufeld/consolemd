@@ -6,10 +6,8 @@ highlighting the markdown. The difference being that the control
 characters are stripped.
 """
 
-import sys
-
+import os, sys
 import click
-import consolemd
 
 import logging
 from .logger import create_logger
@@ -43,6 +41,9 @@ def enable_color(ctx, param, value):
         for h in logger.handlers:
             h._enabled = False
 
+def set_true_color(ctx, param, value):
+    import consolemd.escapeseq
+    consolemd.escapeseq._true_color = value
 
 CTX_SETTINGS=dict(help_option_names=['-h','--help'])
 
@@ -55,11 +56,18 @@ CTX_SETTINGS=dict(help_option_names=['-h','--help'])
         help="show less info")
 @click.option('--color/--no-color',
         default=True, callback=enable_color, is_eager=True,
-        help="enable/disable color output")
+        help="enable/disable logging color")
+@click.option('--true-color/--no-true-color',
+        default=os.environ.get('CONSOLEMD_TRUECOL', True),
+        callback=set_true_color, is_eager=True,
+        help="enable/disable true color (16m colors)")
 @click.option('-o','--output',
         type=click.File('wb'), default=sys.stdout,
         help="output to a file, stdout by default")
-@click.argument('input', type=click.File('rb'))
+@click.option('-s','--style',
+        type=str, default=os.environ.get('CONSOLEMD_STYLE', 'native'),
+        help="what pygments style to use for coloring (def: native)")
+@click.argument('input', type=click.File('rb'), default=sys.stdin)
 @click.pass_context
 def cli(ctx, input, **kw):
     """
@@ -70,7 +78,8 @@ def cli(ctx, input, **kw):
 
     md = input.read()
 
-    renderer = consolemd.Renderer()
+    import consolemd
+    renderer = consolemd.Renderer(style_name=kw['style'])
     renderer.render( kw['output'], md )
 
 if __name__ == "__main__":
