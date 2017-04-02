@@ -97,8 +97,7 @@ class Renderer(object):
         return ' '
 
     def thematic_break(self, obj, entering):
-        # an "not entering" node is not generated
-        return '-'*75 + '\n'
+        return "{}\n".format('-'*75)
 
     def emph(self, obj, entering):
         return ''
@@ -109,7 +108,7 @@ class Renderer(object):
     def heading(self, obj, entering):
         if entering:
             level = 1 if obj.level is None else obj.level
-            return '#'*level + ' '
+            return "{} ".format('#'*level)
         else:
             return '\n\n'
 
@@ -119,12 +118,13 @@ class Renderer(object):
         else:
             self.list_level -= 1
 
-        if entering and obj.list_data['type'] == 'ordered':
-            start = obj.list_data['start'] - 1
-            self.counters[ tuple(obj.sourcepos[0]) ] = start
-
-        if not entering and obj.list_data['type'] == 'ordered':
-            del self.counters[ tuple(obj.sourcepos[0]) ]
+        if obj.list_data['type'] == 'ordered':
+            if entering:
+                # item nodes will increment this
+                start = obj.list_data['start'] - 1
+                self.counters[ tuple(obj.sourcepos[0]) ] = start
+            else:
+                del self.counters[ tuple(obj.sourcepos[0]) ]
 
         if entering:
             return ''
@@ -135,8 +135,6 @@ class Renderer(object):
         return ''
 
     def item(self, obj, entering):
-        # list item
-        # obj.list_data.type is [bullet, ordered]
         if entering:
             if obj.list_data['type'] == 'ordered':
                 key = tuple(obj.parent.sourcepos[0])
@@ -146,9 +144,8 @@ class Renderer(object):
             else:
                 bullet_char = obj.list_data.get('bullet_char') or '*' # -,+,*
 
-            text = ' '*self.list_level*2 + bullet_char + ' '
-            bullet = CommonMark.node.Node('bullet', None)
-            eseq = self.styler.dispatch(bullet, True)
+            text = "{}{} ".format(' '*self.list_level*2, bullet_char)
+            eseq = self.styler.style.entering('bullet')
 
             return self.styler.stylize( eseq, text )
 
@@ -164,8 +161,11 @@ class Renderer(object):
         style = pygments.styles.get_style_by_name(self.style_name)
         formatter = pygments.formatters.get_formatter_by_name('console16m', style=style)
 
-        return pygments.highlight(obj.literal, lexer, formatter) \
-                + EscapeSequence.full_reset_string() + '\n'
+        highlighted = "{}{}\n".format(
+            pygments.highlight(obj.literal, lexer, formatter),
+            EscapeSequence.full_reset_string()
+            )
+        return highlighted
 
     def block_quote(self, obj, entering):
         if entering:
