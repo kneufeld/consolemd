@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import CommonMark
-import pprint
 import pygments
-import pygments.styles
 import pygments.lexers
+import pygments.styles
 import pygments.formatters
+import pprint
 
 from .styler import Styler
 from .escapeseq import EscapeSequence

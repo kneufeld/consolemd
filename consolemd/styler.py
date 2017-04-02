@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import pygments.styles
-import pygments.lexers
-import pygments.formatters
 from pygments import token
 
 from .escapeseq import EscapeSequence
