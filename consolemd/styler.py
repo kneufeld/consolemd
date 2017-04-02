@@ -20,6 +20,7 @@ solarized = {
     'strong':       'bold',
     'block_quote':  'italic',
     'code':         '#af8700',
+    'bullet':         '#268bd2 bold',
     }
 
 class Style(object):
@@ -41,6 +42,7 @@ class Style(object):
             'strong':       (f(token.Generic.Strong, solarized['strong']), None),
             'code':         (f(token.String.Backtick, solarized['code']), None),
             'block_quote':  (f(token.Generic.Emph, solarized['block_quote']), None),
+            'bullet':  (f(token.Literal, solarized['bullet']), None),
                 }
 
         #print self.styles
@@ -63,11 +65,11 @@ class Style(object):
                 return ''
 
         return EscapeSequence(
-                fg = fg(values),
-                bg = bg(values),
-                bold = 'bold' in values,
+                fg        = fg(values),
+                bg        = bg(values),
+                bold      = 'bold' in values,
                 underline = 'underline' in values,
-                italic = 'italic' in values,
+                italic    = 'italic' in values,
                 )
 
     def entering(self, key):
@@ -78,6 +80,7 @@ class Style(object):
 
         if eseq is not None:
             return eseq.color_string()
+
         return ''
 
     def exiting(self, key):
@@ -88,10 +91,12 @@ class Style(object):
 
         if eseq is not None:
             return eseq.reset_string()
+
         return ''
 
 
 class Styler(object):
+
     def __init__(self, style_name):
         self.stack = []
         self.style_name = style_name
@@ -179,5 +184,5 @@ class Styler(object):
         this is not an official markdown type, but it's how we colorize
         just the bullet/number of a list item
         """
-        eseq = EscapeSequence(fg='#268bd2', bold=True)
+        eseq = self.style.styles['bullet'][0]
         return Styler.stylize(eseq, bullet)

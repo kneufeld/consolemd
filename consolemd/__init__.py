@@ -40,18 +40,14 @@ class ConsoleMD(object):
         ast = self.parser.parse( md )
 
         for obj, entering in ast.walker():
-            # print obj, entering
-            # continue
             style_out = self.styler.dispatch(obj, entering)
             fout.write(style_out)
 
             prefix = self.prefix(obj, entering)
-            out = self.dispatch(obj, entering)
+            fout.write(prefix)
 
-            if out is not None:
-                fout.write(prefix)
-                #print debug_tag(obj,entering),
-                fout.write(out)
+            out = self.dispatch(obj, entering)
+            fout.write(out)
 
     def dispatch(self, obj, entering):
         try:
@@ -64,6 +60,10 @@ class ConsoleMD(object):
         return None
 
     def prefix(self, obj, entering):
+        """
+        having newlines before text blocks is problematic, this function
+        tries to catch those corner cases
+        """
         if not entering    : return ''
         if obj.t == 'text' : return ''
         if not obj.prv     : return ''
@@ -73,9 +73,6 @@ class ConsoleMD(object):
             return '\n'
 
         return ''
-
-    def ignore(self, obj, entering):
-        return None
 
     def document(self, obj, entering):
         return ''
