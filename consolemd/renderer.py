@@ -22,9 +22,6 @@ class Renderer(object):
         if style_name is None:
             style_name = 'native'
 
-        # class MonkeyStyle(style):
-        #     styles = dict( style.styles.items() + { Generic.Search:'#ff00f0' }.items() )
-
         self.parser     = parser
         self.style_name = style_name
         self.list_level = -1
@@ -71,8 +68,10 @@ class Renderer(object):
         if not entering    : return ''
         if obj.t == 'text' : return ''
         if not obj.prv     : return ''
-        if obj.t == 'list' : return '' # this feels dirty but sublists get newlined otherwise
+        if obj.t == 'list' : return ''  # this feels dirty but sublists hit
+                                        # upcoming paragraph rule otherwise
 
+        # if previous node was a paragraph we need a blank line
         if obj.prv.t == 'paragraph':
             return '\n'
 
@@ -156,6 +155,7 @@ class Renderer(object):
         return obj.literal
 
     def code_block(self, obj, entering):
+        # farm out code highlighting to pygments
         lang = obj.info or 'text'
         lexer = pygments.lexers.get_lexer_by_name(lang)
         style = pygments.styles.get_style_by_name(self.style_name)

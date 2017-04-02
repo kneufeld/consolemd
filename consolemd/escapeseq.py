@@ -47,6 +47,7 @@ class EscapeSequence(object):
 
     @fg.setter
     def fg(self, color):
+        # convert incoming color to rgb string
         self._fg = ansicolors.get(color, color)
 
     @property
@@ -55,18 +56,13 @@ class EscapeSequence(object):
 
     @bg.setter
     def bg(self, color):
+        # convert incoming color to rgb string
         self._bg = ansicolors.get(color, color)
 
     def escape(self, attrs):
         if len(attrs):
             return "\x1b[" + ";".join(attrs) + "m"
         return ''
-
-    def ansi_lookup(self, color):
-        try:
-            return ansicolors[color]
-        except KeyError:
-            return None
 
     def low_color_string(self):
         attrs = []
