@@ -24,6 +24,8 @@ solarized = {
 
 class Style(object):
 
+    plain = EscapeSequence()
+
     def __init__(self, style_name):
         self.pyg_style = pygments.styles.get_style_by_name(style_name)
 
@@ -69,7 +71,7 @@ class Style(object):
                 )
 
     def entering(self, key):
-        return self.styles.get(key, (None,None))[0] or EscapeSequence()
+        return self.styles.get(key, (None,None))[0] or Style.plain
 
     def exiting(self, key):
         return self.styles.get(key, (None,None))[1] or self.entering(key)
