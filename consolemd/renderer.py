@@ -8,7 +8,7 @@ import pygments.lexers
 import pygments.formatters
 
 from .styler import Styler
-from .terminal256 import EscapeSequence
+from .escapeseq import EscapeSequence
 
 import logging
 logger = logging.getLogger('consolemd')
@@ -40,6 +40,8 @@ class Renderer(object):
         ast = self.parser.parse( md )
 
         for obj, entering in ast.walker():
+            #logger.debug( debug_tag(obj, entering) )
+
             prefix = self.prefix(obj, entering)
             fout.write(prefix)
 
@@ -52,6 +54,8 @@ class Renderer(object):
             else:
                 fout.write(out)
                 fout.write(style_out)
+
+            fout.flush()
 
     def dispatch(self, obj, entering):
         try:
@@ -180,6 +184,3 @@ class Renderer(object):
             return '!['
         else:
             return "]({})".format(obj.destination)
-
-
-

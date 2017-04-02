@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from consolemd.colormap import ansicolors, ColorMap, to_rgb
+from consolemd.colormap import ColorMap, to_rgb, ansicolors
 
 class EscapeSequence(object):
-    def __init__(self, fg=None, bg=None, bold=False, underline=False, italic=False, true_color=True):
+    def __init__(self,
+            fg=None, bg=None,
+            bold=False, underline=False, italic=False, true_color=True
+            ):
+
         self.fg = fg
         self.bg = bg
         self.bold = bold
@@ -20,7 +24,7 @@ class EscapeSequence(object):
 
     def __repr__(self):
         return "<ESeq: {} {} {} {} {}>".format(
-                self.fg or '', self.bg or '', self.bold, self.underline, self.italic
+                self.fg or '_', self.bg or '_', self.bold, self.underline, self.italic
                 )
 
     @property
@@ -89,6 +93,10 @@ class EscapeSequence(object):
         return self.escape(attrs)
 
     def reset_string(self):
+        """
+        tries to minimally reset current terminal state
+        ie: only reset fg color and not everything
+        """
         attrs = []
         if self.fg is not None:
             attrs.append("39")

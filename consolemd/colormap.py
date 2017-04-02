@@ -1,35 +1,8 @@
+# -*- coding: utf-8 -*-
 
-esc = "\x1b["
-
-codes = {}
-codes[""] = ""
-codes["reset"] = esc + "39;49;00m"
-
-codes["bold"] = esc + "01m"
-codes["faint"] = esc + "02m"
-codes["standout"] = esc + "03m"
-codes["italic"] = esc + "03m"
-codes["underline"] = esc + "04m"
-codes["blink"] = esc + "05m"
-codes["overline"] = esc + "06m"
-
-dark_colors = ["black", "darkred", "darkgreen", "brown", "darkblue",
-               "purple", "teal", "lightgray"]
-light_colors = ["darkgray", "red", "green", "yellow", "blue",
-                "fuchsia", "turquoise", "white"]
-
-x = 30
-for d, l in zip(dark_colors, light_colors):
-    codes[d] = esc + "%im" % x
-    codes[l] = esc + "%i;01m" % x
-    x += 1
-
-del d, l, x
-
-codes["darkteal"] = codes["turquoise"]
-codes["darkyellow"] = codes["brown"]
-codes["fuscia"] = codes["fuchsia"]
-codes["white"] = codes["bold"]
+"""
+contains color utility functions and xterm color data
+"""
 
 # Default mapping of #ansixxx to RGB colors.
 ansicolors = {
@@ -38,7 +11,7 @@ ansicolors = {
     '#ansidarkred'   : '#7f0000',
     '#ansidarkgreen' : '#007f00',
     '#ansibrown'     : '#7f7fe0',
-    '#ansidarkblue'  : '#00007f',
+    '#ansidarkblue'  : '#40407f', # lighter than normal
     '#ansipurple'    : '#7f007f',
     '#ansiteal'      : '#007f7f',
     '#ansilightgray' : '#e5e5e5',
@@ -47,7 +20,7 @@ ansicolors = {
     '#ansired'       : '#ff0000',
     '#ansigreen'     : '#00ff00',
     '#ansiyellow'    : '#ffff00',
-    '#ansiblue'      : '#6060ff',
+    '#ansiblue'      : '#6060ff', # lighter than normal
     '#ansifuchsia'   : '#ff00ff',
     '#ansiturquoise' : '#00ffff',
     '#ansiwhite'     : '#ffffff',
@@ -93,9 +66,12 @@ def _build_color_table():
 
     return xterm_colors
 
-xterm_colors = _build_color_table()
-
 def to_rgb(color):
+    """
+    return r,g,b integers from #colorstring
+    """
+    color = ansicolors.get(color, color)
+
     if color[0] == '#':
         color = color[1:]
 
@@ -107,31 +83,45 @@ def to_rgb(color):
 
     return r,g,b
 
+
 def from_rgb(r,g,b):
+    """
+    return #colorstring from r,g,b integers
+    """
     # hex() produces "0x08", we want just "08"
-    rgb = [hex(i)[2:].zfill(2) for i in [r,g,b]]
+    rgb = [hex(i)[2:].zfill(2) for i in map(int, [r,g,b])]
     return "#" + "".join(rgb)
 
+
 def reshade( color, per):
+    """
+    given a #colorstring and a percentage, darken/lighten each
+    r,g,b channel
+    """
+    def scale(c, per):
+        return max(0, min(255, int(c*per)))
+
     if per == 1.0:
         return color
 
     r,g,b = to_rgb(color)
-    r,g,b = map( lambda c: int(c*per), [r,g,b] )
+    r,g,b = map( lambda c: scale(c,per), [r,g,b] )
     return from_rgb(r,g,b)
 
 
 class ColorMap(object):
     """
-    Helper to generate colors based on rgb values
+    return the closest xterm color index based on a #colorstring
     """
+
+    # only called once for all ColorMap instances
+    xterm_colors = _build_color_table()
 
     def __init__(self, color):
         """
-        color can be a name, eg. #ansiyellow
-        color can be a rgb value that starts with #, eg. #fe348c
+        color can be a name (eg. #ansiyellow) or value (eg. #fe348c)
         """
-        self._color = color
+        self._color = ansicolors.get(color, color)
 
     @property
     def color(self):
@@ -145,7 +135,7 @@ class ColorMap(object):
         match = 0
 
         for i in range(0, 254):
-            values = xterm_colors[i]
+            values = self.xterm_colors[i]
 
             rd = r - values[0]
             gd = g - values[1]

@@ -5,7 +5,7 @@ import pygments.lexers
 import pygments.formatters
 from pygments import token
 
-from .terminal256 import EscapeSequence
+from .escapeseq import EscapeSequence
 from .colormap import reshade
 
 import logging

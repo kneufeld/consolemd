@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 ConsoleMD renders markdown to the console instead of just syntax
 highlighting the markdown. The difference being that the control

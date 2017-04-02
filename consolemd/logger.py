@@ -1,33 +1,22 @@
-from __future__ import print_function
+# -*- coding: utf-8 -*-
+
 import sys
 import logging
 
-import colorama
-from .terminal256 import EscapeSequence
+from .escapeseq import EscapeSequence
 
 class ColoredStream( logging.StreamHandler ):
-
-    """
-    colorama constants
-    use: colorama.Fore.RED + "some string"
-    Fore: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
-    Back: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
-    Style: DIM, NORMAL, BRIGHT, RESET_ALL
-    """
-
     colors = {
-        'DEBUG': EscapeSequence(fg='#ansiblue'),
-        'INFO': EscapeSequence(),
-        'WARNING': EscapeSequence(fg='#ansiyellow'),
-        'ERROR': EscapeSequence(fg='#ansired'),
-        'CRITICAL': EscapeSequence(fg='#ansired', bold=True),
+        'DEBUG'    : EscapeSequence(fg='#ansiblue'),
+        'INFO'     : EscapeSequence(),
+        'WARNING'  : EscapeSequence(fg='#ansiyellow'),
+        'ERROR'    : EscapeSequence(fg='#ansired', bg='#400000'),
+        'CRITICAL' : EscapeSequence(fg='#ansired', bg='#400000', bold=True),
     }
 
     def __init__(self, stream=None):
-
         # don't output color to pipes or files
-        self._enabled = sys.stdout.isatty() and sys.stderr.isatty()
-
+        self._enabled = sys.stderr.isatty()
         return super(ColoredStream,self).__init__(stream)
 
     def emit(self, record):
@@ -40,10 +29,11 @@ class ColoredStream( logging.StreamHandler ):
         msg = self.format(record)
 
         if self._enabled:
-            print( eseq.color_string() + msg + eseq.reset_string(), file=self.stream )
+            self.stream.write( "{}{}{}\n".format(eseq, msg, eseq.reset_string()) )
         else:
-            self.stream.write( "%s\n" % (msg) )
-            self.flush()
+            self.stream.write( "{}\n".format(msg) )
+
+        self.flush()
 
 
 def create_logger(name):
