@@ -15,6 +15,14 @@ class EscapeSequence:
         else:
             self.color_string = self.low_color_string
 
+    def __str__(self):
+        return self.color_string()
+
+    def __repr__(self):
+        return "<ESeq: {} {} {} {} {}>".format(
+                self.fg or '', self.bg or '', self.bold, self.underline, self.italic
+                )
+
     def escape(self, attrs):
         if len(attrs):
             return "\x1b[" + ";".join(attrs) + "m"
@@ -28,12 +36,8 @@ class EscapeSequence:
             attrs.extend(("38", "5", "%i" % color))
 
         if self.bg is not None:
-            if self.bg in ansicolors:
-                esc = codes[self.bg[5:]]
-                # extract fg color code, add 10 for bg.
-                attrs.append(str(int(esc[2:4])+10))
-            else:
-                attrs.extend(("48", "5", "%i" % self.bg))
+            color = ColorMap( self.bg ).color
+            attrs.extend(("48", "5", "%i" % color))
 
         if self.bold:
             attrs.append("01")
@@ -53,7 +57,9 @@ class EscapeSequence:
             r,g,b = map(str, Style.to_rgb(self.fg))
             attrs.extend(("38", "2", r, g, b))
         if self.bg:
-            attrs.extend(("48", "2", str(self.bg[0]), str(self.bg[1]), str(self.bg[2])))
+            from .style import Style
+            r,g,b = map(str, Style.to_rgb(self.bg))
+            attrs.extend(("48", "2", r, g, b))
         if self.bold:
             attrs.append("01")
         if self.underline:
@@ -71,3 +77,7 @@ class EscapeSequence:
         if self.bold or self.underline or self.italic:
             attrs.append("00")
         return self.escape(attrs)
+
+    @staticmethod
+    def full_reset_string():
+        return EscapeSequence(fg=1, bg=1, bold=1).reset_string()

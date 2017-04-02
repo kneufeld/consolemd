@@ -2,30 +2,32 @@
 
 import CommonMark
 import pprint
+import pygments
+import pygments.styles
+import pygments.lexers
+import pygments.formatters
 
-from .style import NativeStyle
+from .styler import Styler
+from .terminal256 import EscapeSequence
 
 import logging
 logger = logging.getLogger('consolemd')
 
 class ConsoleMD(object):
 
-    def __init__(self, parser, style=None):
+    def __init__(self, parser=None, style_name=None):
         if parser is None:
             parser = CommonMark.Parser()
 
-        if style is None:
-            style = NativeStyle()
-
-        if type(style) is str:
-            import pygments.styles
-            style = pygments.styles.get_style_by_name(style)
+        if style_name is None:
+            style_name = 'monokai'
 
         # class MonkeyStyle(style):
         #     styles = dict( style.styles.items() + { Generic.Search:'#ff00f0' }.items() )
 
         self.parser     = parser
-        self.style      = style
+        self.style_name = style_name
+        self.styler     = Styler(style_name)
         self.list_level = -1
         self.counters   = {}
 
@@ -40,7 +42,7 @@ class ConsoleMD(object):
         for obj, entering in ast.walker():
             # print obj, entering
             # continue
-            style_out = getattr(self.style, obj.t)(obj, entering)
+            style_out = self.styler.dispatch(obj, entering)
             fout.write(style_out)
 
             prefix = self._prefix(obj, entering)
@@ -149,19 +151,22 @@ class ConsoleMD(object):
             else:
                 bullet_char = obj.list_data.get('bullet_char') or '*' # -,+,*
 
-            return ' '*self.list_level*2 + self.style.bullet(bullet_char) + ' '
+            return ' '*self.list_level*2 + self.styler.bullet(bullet_char) + ' '
 
         return ''
 
     def _code(self, obj, entering):
         # backticks
-        return obj.literal + self.style.pop().reset_string()
+        return obj.literal + self.styler.pop().reset_string()
 
     def _code_block(self, obj, entering):
-        # TODO pass obj.literal to pygments
-        #pprint.pprint(obj.__dict__)
-        #obj.info contains the language or '' if not provided
-        return obj.literal + self.style.pop().reset_string() + '\n'
+        lang = obj.info or 'text'
+        lexer = pygments.lexers.get_lexer_by_name(lang)
+        style = pygments.styles.get_style_by_name(self.style_name)
+        formatter = pygments.formatters.get_formatter_by_name('console16m', style=style)
+
+        return pygments.highlight(obj.literal, lexer, formatter) \
+                + EscapeSequence.full_reset_string() + '\n'
 
     def _block_quote(self, obj, entering):
         if entering:
