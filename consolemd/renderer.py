@@ -53,8 +53,6 @@ class Renderer(object):
 
                 stream.flush()
 
-        #print self.styler.stack
-
     def dispatch(self, obj, entering):
         try:
             handler = getattr(self, obj.t)

@@ -112,52 +112,54 @@ class Styler(object):
 
     def __exit__(self, exc_type, exc_value, traceback):
         obj, entering = self._curr_call
-        # import pprint
-        # print entering, obj.t, pprint.pformat(obj.__dict__)
+        self._curr_call = None
 
         if not entering or obj.t in Styler.no_closing_node:
-            eseq = self.stack.pop()
+            eseq = self._stack.pop()
             self.stream.write( eseq.reset_string() )
 
             if obj.t != 'document':
-                eseq = self.stack[-1]
+                eseq = self._stack[-1]
                 self.stream.write( eseq.color_string() )
+            else:
+                assert len(self._stack) == 0, "missed an ast type in no_closing_node"
 
     def __getattr__(self, name):
         from functools import partial
         return partial(self._default, name)
 
-    def push(self, eseq):
-        self.stack.append(eseq)
-        return eseq
-
-    def pop(self):
-        return self.stack.pop()
-
     @staticmethod
     def stylize( eseq, text ):
         return "{}{}{}".format(eseq.color_string(), text, eseq.reset_string())
 
-    def dispatch(self, obj, entering):
-        """
-        returns an EscapeSequence object
-        """
-        try:
-            handler = getattr(self, obj.t)
-            return handler(obj, entering)
-        except KeyError:
-            logger.error( "unhandled ast type: {}".format(obj.t) )
-
-        return ''
-
     def _default(self, name, obj, entering):
+        """
+        __getattr__ returns this function if a specific/overriding method
+        is not provided in this class
+        """
         if entering:
             return self.style.entering(name)
         else:
             return self.style.exiting(name)
 
+    def push(self, eseq):
+        self._stack.append(eseq)
+        return eseq
+
+    def pop(self):
+        return self._stack.pop()
+
+    def dispatch(self, obj, entering):
+        """
+        returns an EscapeSequence object
+        """
+        handler = getattr(self, obj.t)
+        return handler(obj, entering)
+
     def heading(self, obj, entering):
-        # make each heading level a bit darker
+        """
+        do specialized styling for headers, make each heading level a bit darker
+        """
         eseq = self.style.entering('heading')
         color = eseq.fg
 
