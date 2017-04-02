@@ -167,16 +167,3 @@ class Styler(object):
         per = 1.0 - .05 * (level-1)
         eseq.fg = reshade(color, per)
         return eseq
-
-    def code(self, obj, entering):
-        eseq = self.style.entering('code')
-        return eseq
-
-    def bullet(self, obj, entering):
-        """
-        this is not an official markdown type, but it's how we colorize
-        just the bullet/number of a list item
-        """
-        eseq = self.style.entering('bullet')
-        eseq.stream = self.stream
-        return eseq
