@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-import os, sys
+import sys
 import consolemd
-import pprint
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
