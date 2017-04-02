@@ -19,8 +19,10 @@ solarized = {
     'emph':         'italic',
     'strong':       'bold',
     'block_quote':  'italic',
-    'code':         '#af8700',
-    'bullet':         '#268bd2 bold',
+    'code':         '#af8700', # yellow
+    'link':         '#0087ff',
+    'image':        '#0087ff',
+    'bullet':       '#268bd2 bold', # blue
     }
 
 class Style(object):
@@ -40,6 +42,8 @@ class Style(object):
             'heading':      (f(token.Generic.Heading, solarized['heading']), None),
             'emph':         (f(token.Generic.Emph, solarized['emph']), None),
             'strong':       (f(token.Generic.Strong, solarized['strong']), None),
+            'link':         (f(token.Name.Entity, solarized['link']), None),
+            'image':        (f(token.Name.Entity, solarized['image']), None),
             'code':         (f(token.String.Backtick, solarized['code']), None),
             'block_quote':  (f(token.Generic.Emph, solarized['block_quote']), None),
             'bullet':  (f(token.Literal, solarized['bullet']), None),
