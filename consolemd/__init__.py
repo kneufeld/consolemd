@@ -45,17 +45,17 @@ class ConsoleMD(object):
             style_out = self.styler.dispatch(obj, entering)
             fout.write(style_out)
 
-            prefix = self._prefix(obj, entering)
-            out = self._dispatch(obj, entering)
+            prefix = self.prefix(obj, entering)
+            out = self.dispatch(obj, entering)
 
             if out is not None:
                 fout.write(prefix)
                 #print debug_tag(obj,entering),
                 fout.write(out)
 
-    def _dispatch(self, obj, entering):
+    def dispatch(self, obj, entering):
         try:
-            handler = getattr(self, '_' + obj.t)
+            handler = getattr(self, obj.t)
             return handler(obj, entering)
         except KeyError:
             logger.error( "unhandled ast type: {}".format(obj.t) )
@@ -63,7 +63,7 @@ class ConsoleMD(object):
 
         return None
 
-    def _prefix(self, obj, entering):
+    def prefix(self, obj, entering):
         if not entering    : return ''
         if obj.t == 'text' : return ''
         if not obj.prv     : return ''
@@ -74,46 +74,45 @@ class ConsoleMD(object):
 
         return ''
 
-    def _ignore(self, obj, entering):
+    def ignore(self, obj, entering):
         return None
 
-    def _document(self, obj, entering):
+    def document(self, obj, entering):
         return ''
 
-    def _paragraph(self, obj, entering):
-        #pprint.pprint(obj.__dict__)
+    def paragraph(self, obj, entering):
         if entering:
             return ''
         else:
             return '\n'
 
-    def _text(self, obj, entering):
+    def text(self, obj, entering):
         return obj.literal
 
-    def _linebreak(self, obj, entering):
+    def linebreak(self, obj, entering):
         return '\n'
 
-    def _softbreak(self, obj, entering):
+    def softbreak(self, obj, entering):
         return ' '
 
-    def _thematic_break(self, obj, entering):
+    def thematic_break(self, obj, entering):
         # an "not entering" node is not generated
         return '-'*75 + '\n'
 
-    def _emph(self, obj, entering):
+    def emph(self, obj, entering):
         return ''
 
-    def _strong(self, obj, entering):
+    def strong(self, obj, entering):
         return ''
 
-    def _heading(self, obj, entering):
+    def heading(self, obj, entering):
         if entering:
             level = 1 if obj.level is None else obj.level
             return '#'*level + ' '
         else:
             return '\n\n'
 
-    def _list(self, obj, entering):
+    def list(self, obj, entering):
         if entering:
             self.list_level += 1
         else:
@@ -122,11 +121,6 @@ class ConsoleMD(object):
         if entering and obj.list_data['type'] == 'ordered':
             start = obj.list_data['start'] - 1
             self.counters[ tuple(obj.sourcepos[0]) ] = start
-
-            # if obj.parent.t == 'item' and obj.parent.list_data['type'] == 'ordered':
-            #     self.prefix.append( self.prefix[-1] + '1.' )
-            # else:
-            #     self.prefix.append('1.')
 
         if not entering and obj.list_data['type'] == 'ordered':
             del self.counters[ tuple(obj.sourcepos[0]) ]
@@ -139,7 +133,7 @@ class ConsoleMD(object):
 
         return ''
 
-    def _item(self, obj, entering):
+    def item(self, obj, entering):
         # list item
         # obj.list_data.type is [bullet, ordered]
         if entering:
@@ -155,11 +149,11 @@ class ConsoleMD(object):
 
         return ''
 
-    def _code(self, obj, entering):
+    def code(self, obj, entering):
         # backticks
         return obj.literal + self.styler.pop().reset_string()
 
-    def _code_block(self, obj, entering):
+    def code_block(self, obj, entering):
         lang = obj.info or 'text'
         lexer = pygments.lexers.get_lexer_by_name(lang)
         style = pygments.styles.get_style_by_name(self.style_name)
@@ -168,19 +162,19 @@ class ConsoleMD(object):
         return pygments.highlight(obj.literal, lexer, formatter) \
                 + EscapeSequence.full_reset_string() + '\n'
 
-    def _block_quote(self, obj, entering):
+    def block_quote(self, obj, entering):
         if entering:
             return ''
         else:
             return '\n'
 
-    def _link(self, obj, entering):
+    def link(self, obj, entering):
         if entering:
             return '['
         else:
             return "]({})".format(obj.destination)
 
-    def _image(self, obj, entering):
+    def image(self, obj, entering):
         if entering:
             return '!['
         else:
