@@ -90,9 +90,15 @@ class Styler(object):
         self.style_name = style_name
         self.style = Style(style_name)
 
-        self.stack = []
+        self._stack = []
+        self._curr_call = None
 
     def cm(self, obj, entering):
+        """
+        return ourselves as a context manager, unfortunately __enter__
+        can't take any parameters
+        """
+        assert self._curr_call == None, "Styler is not re-entrant"
         self._curr_call = (obj, entering)
         return self
 
