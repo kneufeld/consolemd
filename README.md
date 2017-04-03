@@ -42,6 +42,17 @@ vim vs xcode
 
 `consolemd` uses `native` by default but `monokai` is also very nice.
 
+## Your terminal
+
+iTerm2 under OSX is great and nicely supports true color. Urxvt under
+Linux only pretends to be true color and doesn't do it very well.
+
+If you have strange color issues then running with `--no-true-color`
+should be the first thing you try. If that fixes your problem then
+make sure to add `CONSOLEMD_TRUECOL=0` to your `.bashrc`.
+
+See this [gist](https://gist.github.com/XVilka/8346728) for more info.
+
 ## Why not just use pygments?
 
 Because pygments highlights the markdown but doesn't strip out
