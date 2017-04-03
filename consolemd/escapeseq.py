@@ -35,7 +35,6 @@ class EscapeSequence(object):
                 )
 
     def __enter__(self):
-        print "__enter__", repr(self)
         self.stream.write( self.color_string() )
 
     def __exit__(self, exc_type, exc_value, traceback):
