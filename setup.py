@@ -60,5 +60,23 @@ setup(
     keywords         = "markdown console terminal".split(),
     url              = module.__url__,
 
+    classifiers      = [
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "Intended Audience :: System Administrators",
+        "Natural Language :: English",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "Topic :: Software Development :: Documentation",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: Terminals",
+        "Topic :: Text Processing :: Markup",
+        "Topic :: Utilities",
+        ],
+
     data_files       = [],
 )
