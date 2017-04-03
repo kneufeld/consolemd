@@ -85,3 +85,7 @@ images. Vertical whitespace is also very tricky and subjective.
 Unfortunately `commonmark-py` isn't very easy to use as a library so if
 any node types got missed then chaos may ensue. Please open a bug (or even
 better a pull request) so that `consolemd` can get patched up.
+
+## Example
+
+![](http://i.imgur.com/bR3AllY.png)
