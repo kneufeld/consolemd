@@ -13,6 +13,8 @@ from .escapeseq import EscapeSequence
 import logging
 logger = logging.getLogger('consolemd')
 
+endl = '\n'
+
 class Renderer(object):
 
     def __init__(self, parser=None, style_name=None):
@@ -56,7 +58,7 @@ class Renderer(object):
             return handler(obj, entering)
         except KeyError:
             logger.error( "unhandled ast type: {}".format(obj.t) )
-            logger.debug( "entering: %s,\n%s", entering, pprint.pformat(obj.__dict__) )
+            logger.debug( "entering: %s,endl%s", entering, pprint.pformat(obj.__dict__) )
 
         return None
 
@@ -73,7 +75,7 @@ class Renderer(object):
 
         # if previous node was a paragraph we need a blank line
         if obj.prv.t == 'paragraph':
-            return '\n'
+            return endl
 
         return ''
 
@@ -84,13 +86,13 @@ class Renderer(object):
         if entering:
             return ''
         else:
-            return '\n'
+            return endl
 
     def text(self, obj, entering):
         return obj.literal
 
     def linebreak(self, obj, entering):
-        return '\n'
+        return endl
 
     def softbreak(self, obj, entering):
         return ' '
@@ -109,7 +111,7 @@ class Renderer(object):
             level = 1 if obj.level is None else obj.level
             return "{} ".format('#'*level)
         else:
-            return '\n\n'
+            return endl
 
     def list(self, obj, entering):
         if entering:
