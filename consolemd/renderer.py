@@ -15,6 +15,15 @@ logger = logging.getLogger('consolemd')
 
 endl = '\n'
 
+def debug_tag(obj, entering, match):
+    if entering != match:
+        return ''
+
+    if entering:
+        return "<{}>".format(obj.t)
+    return "</{}>".format(obj.t)
+
+
 class Renderer(object):
 
     def __init__(self, parser=None, style_name=None):
@@ -30,10 +39,6 @@ class Renderer(object):
         self.counters   = {}
 
     def render(self, stream, md):
-        def debug_tag(obj, entering):
-            if entering:
-                return "<{}>".format(obj.t)
-            return "</{}>".format(obj.t)
 
         self.stream = stream
         self.styler = Styler( stream, self.style_name)
@@ -42,13 +47,15 @@ class Renderer(object):
         for obj, entering in ast.walker():
 
             with self.styler.cm(obj, entering):
-                logger.debug( debug_tag(obj, entering) )
-
                 prefix = self.prefix(obj, entering)
                 stream.write(prefix)
 
+                logger.debug( debug_tag(obj, entering, True) )
+
                 out = self.dispatch(obj, entering)
                 stream.write(out)
+
+                logger.debug( debug_tag(obj, entering, False) )
 
                 stream.flush()
 
