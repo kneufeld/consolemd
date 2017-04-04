@@ -67,15 +67,17 @@ class Renderer(object):
         having newlines before text blocks is problematic, this function
         tries to catch those corner cases
         """
-        if not entering    : return ''
-        if obj.t == 'text' : return ''
-        if not obj.prv     : return ''
-        if obj.t == 'list' : return ''  # this feels dirty but sublists hit
-                                        # upcoming paragraph rule otherwise
+        if not entering:
+            return ''
 
-        # if previous node was a paragraph we need a blank line
-        if obj.prv.t == 'paragraph':
-            return endl
+        if obj.t == 'document':
+            return ''
+
+        # if our parent is the document the prefix a newline
+        if obj.parent.t == 'document':
+            # don't prefix the very first one though
+            if obj.parent.first_child != obj:
+                return endl
 
         return ''
 
@@ -98,7 +100,7 @@ class Renderer(object):
         return ' '
 
     def thematic_break(self, obj, entering):
-        return "{}\n".format('-'*75)
+        return "{}".format('-'*75)
 
     def emph(self, obj, entering):
         return ''
@@ -129,9 +131,6 @@ class Renderer(object):
 
         if entering:
             return ''
-        elif obj.nxt is not None:
-            # if we're not a nested list then newline
-            return '\n'
 
         return ''
 
@@ -163,17 +162,16 @@ class Renderer(object):
         style = pygments.styles.get_style_by_name(self.style_name)
         formatter = pygments.formatters.get_formatter_by_name('console16m', style=style)
 
-        highlighted = "{}{}\n".format(
+        highlighted = "{}{}".format(
             pygments.highlight(obj.literal, lexer, formatter),
             EscapeSequence.full_reset_string()
             )
+
         return highlighted
 
     def block_quote(self, obj, entering):
-        if entering:
-            return ''
-        else:
-            return '\n'
+        # has text children
+        return ''
 
     def link(self, obj, entering):
         if entering:
