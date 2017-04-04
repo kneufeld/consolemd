@@ -31,6 +31,9 @@ If your terminal doesn't support true color (16 million colors) then
 run `consolemd` with `--no-true-color` or set environment variable
 `CONSOLEMD_TRUECOL=0`.
 
+If you like really long paragraphs that wrap at terminal edge then
+use `--no-soft-wrap` or set `CONSOLEMD_WRAP=0`.
+
 A current at-time-of-writing list of pygment styles is the following:
 
 ```text

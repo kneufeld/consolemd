@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import sys
+
 import CommonMark
 import pygments
 import pygments.lexers
@@ -38,9 +40,11 @@ class Renderer(object):
         self.list_level = -1
         self.counters   = {}
 
-    def render(self, stream, md):
+    def render(self, md, **kw):
+        stream          = kw.get('output', sys.stdout)
+        self.soft_wrap  = kw.get('soft_wrap', True)
+        self.soft_wrap_char = endl if self.soft_wrap else ' '
 
-        self.stream = stream
         self.styler = Styler( stream, self.style_name)
         ast = self.parser.parse( md )
 
@@ -104,7 +108,7 @@ class Renderer(object):
         return endl
 
     def softbreak(self, obj, entering):
-        return ' '
+        return self.soft_wrap_char
 
     def thematic_break(self, obj, entering):
         return "{}".format('-'*75)

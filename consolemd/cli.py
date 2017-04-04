@@ -61,6 +61,9 @@ CTX_SETTINGS=dict(help_option_names=['-h','--help'])
         default=os.environ.get('CONSOLEMD_TRUECOL', True),
         callback=set_true_color, is_eager=True,
         help="enable/disable true color (16m colors)")
+@click.option('--soft-wrap/--no-soft-wrap',
+        default=os.environ.get('CONSOLEMD_WRAP', True),
+        help="output lines wrap along with source lines")
 @click.option('-o','--output',
         type=click.File('wb'), default=sys.stdout,
         help="output to a file, stdout by default")
@@ -80,7 +83,7 @@ def cli(ctx, input, **kw):
 
     import consolemd
     renderer = consolemd.Renderer(style_name=kw['style'])
-    renderer.render( kw['output'], md )
+    renderer.render( md, **kw )
 
 if __name__ == "__main__":
     cli()
