@@ -3,6 +3,10 @@
 Here's what we all hope is an accurate list of things that have changed
 between versions.
 
+## v0.2.1
+
+* can now load and render a utf-8 encoded file
+
 ## v0.2.0
 
 * inserting vertical whitespace is much simpler and much more effective
