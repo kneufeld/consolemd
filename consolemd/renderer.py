@@ -39,6 +39,7 @@ class Renderer(object):
         self.style_name = style_name
         self.list_level = -1
         self.counters   = {}
+        self.footnotes  = []
 
     def render(self, md, **kw):
         stream          = kw.get('output', sys.stdout)
@@ -93,7 +94,20 @@ class Renderer(object):
         return ''
 
     def document(self, obj, entering):
-        return ''
+        if entering:
+            return ''
+        else:
+            formatted_footnotes = []
+            for i, footnote in enumerate(self.footnotes):
+                i += 1
+
+                f = "[{}] - {}".format(i, footnote)
+                formatted_footnotes.append(f)
+
+            if formatted_footnotes:
+                return endl + endl.join(formatted_footnotes) + endl
+
+            return ''
 
     def paragraph(self, obj, entering):
         if entering:
@@ -186,12 +200,14 @@ class Renderer(object):
 
     def link(self, obj, entering):
         if entering:
-            return '['
+            self.footnotes.append(obj.destination)
+            return ''
         else:
-            return "]({})".format(obj.destination)
+            return "[{}]".format( len(self.footnotes) )
 
     def image(self, obj, entering):
         if entering:
-            return '!['
+            self.footnotes.append(obj.destination)
+            return '<image:'
         else:
-            return "]({})".format(obj.destination)
+            return ">[{}]".format( len(self.footnotes) )
