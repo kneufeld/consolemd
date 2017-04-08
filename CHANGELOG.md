@@ -3,6 +3,10 @@
 Here's what we all hope is an accurate list of things that have changed
 between versions.
 
+## v0.3.0
+
+* show image/link text and show their urls as footnotes at end of document
+
 ## v0.2.1
 
 * can now load and render a utf-8 encoded file
