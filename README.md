@@ -91,4 +91,4 @@ better a pull request) so that `consolemd` can get patched up.
 
 ## Example
 
-![](http://i.imgur.com/bR3AllY.png)
+![](http://i.imgur.com/9zoSZdb.png)
