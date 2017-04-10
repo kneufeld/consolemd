@@ -56,6 +56,33 @@ make sure to add `CONSOLEMD_TRUECOL=0` to your `.bashrc`.
 
 See this [gist](https://gist.github.com/XVilka/8346728) for more info.
 
+## Italics, OSX, and you
+
+For some reason Apple has disabled _italics_ in the their `terminfo` files
+so you have to do a little patching to enable them. This is irrespective
+of which terminal program you use but may depend on what `$TERM` is set
+to.
+
+Anyhow, based on this excellent [post](http://www.eddieantonio.ca/blog/2015/04/16/iterm-italics/)
+here's the `tl;dr` on enabling _italics_ in OSX.
+
+```bash
+infocmp xterm-256color > /tmp/xterm-256color.terminfo
+printf '\tsitm\\E[3m, ritm=\\E[23m,\n' >> /tmp/xterm-256color.terminfo
+tic /tmp/xterm-256color.terminfo
+```
+
+Note, the `printf` line above may not work quite right so edit
+`/tmp/xterm-256color.terminfo` and manually append `sitm=\E[3m, ritm=\E[23m,`
+to the end of the file.
+
+Regardless, restart your terminal program of choice and italics should
+work. Test with:
+
+```bash
+echo `tput sitm`italics`tput ritm`
+```
+
 ## Why not just use pygments?
 
 Because pygments highlights the markdown but doesn't strip out
@@ -82,8 +109,8 @@ to use a CommonMark parser, an interesting article can be found
 ## Bugs?
 
 Probably. There are lots of corner cases and it's not always clear what
-the proper output should even be. For example, url links and embedded
-images. Vertical whitespace is also very tricky and subjective.
+the proper output should even be. For instance, an executive decision
+was made to show links as a list at the end of the document.
 
 Unfortunately `commonmark-py` isn't very easy to use as a library so if
 any node types got missed then chaos may ensue. Please open a bug (or even
