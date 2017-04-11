@@ -101,6 +101,9 @@ def reshade( color, per):
     def scale(c, per):
         return max(0, min(255, int(c*per)))
 
+    if not color:
+        return ''
+
     if per == 1.0:
         return color
 
