@@ -9,7 +9,7 @@ import pygments.styles
 import pygments.formatters
 import pprint
 
-from .styler import Styler
+from .styler import Styler, Style
 from .escapeseq import EscapeSequence
 
 import logging
@@ -184,7 +184,7 @@ class Renderer(object):
         # farm out code highlighting to pygments
         lang = obj.info or 'text'
         lexer = pygments.lexers.get_lexer_by_name(lang)
-        style = pygments.styles.get_style_by_name(self.style_name)
+        style = Style.get_style_by_name(self.style_name)
         formatter = pygments.formatters.get_formatter_by_name('console16m', style=style)
 
         highlighted = "{}{}".format(

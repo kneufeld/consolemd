@@ -27,7 +27,7 @@ class Style(object):
     plain = EscapeSequence()
 
     def __init__(self, style_name):
-        self.pyg_style = pygments.styles.get_style_by_name(style_name)
+        self.pyg_style = Style.get_style_by_name(style_name)
 
         f = self.eseq_from_pygments # shortcut
 
@@ -44,6 +44,14 @@ class Style(object):
                 }
 
         #print self.styles
+
+    @staticmethod
+    def get_style_by_name(style_name):
+        try:
+            return pygments.styles.get_style_by_name(style_name)
+        except pygments.util.ClassNotFound:
+            logger.error("no such style: %s", style_name)
+            return pygments.styles.get_style_by_name('native')
 
     def eseq_from_pygments(self, token, default=''):
         value = self.pyg_style.styles.get(token, '') or default
