@@ -154,9 +154,6 @@ class Renderer(object):
             else:
                 del self.counters[ tuple(obj.sourcepos[0]) ]
 
-        if entering:
-            return ''
-
         return ''
 
     def item(self, obj, entering):
