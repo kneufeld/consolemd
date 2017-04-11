@@ -31,7 +31,7 @@ If your terminal doesn't support true color (16 million colors) then
 run `consolemd` with `--no-true-color` or set environment variable
 `CONSOLEMD_TRUECOL=0`.
 
-If you like really long paragraphs that wrap at terminal edge then
+If you like really long lines that wrap at terminal edge then
 use `--no-soft-wrap` or set `CONSOLEMD_WRAP=0`.
 
 A current at-time-of-writing list of pygment styles is the following:
@@ -110,7 +110,7 @@ to use a CommonMark parser, an interesting article can be found
 
 Probably. There are lots of corner cases and it's not always clear what
 the proper output should even be. For instance, an executive decision
-was made to show links as a list at the end of the document.
+was made to show url links as a list at the end of the document.
 
 Unfortunately `commonmark-py` isn't very easy to use as a library so if
 any node types got missed then chaos may ensue. Please open a bug (or even
