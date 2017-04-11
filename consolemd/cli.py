@@ -41,9 +41,22 @@ def enable_color(ctx, param, value):
         for h in logger.handlers:
             h._enabled = False
 
+
 def set_true_color(ctx, param, value):
     import consolemd.escapeseq
     consolemd.escapeseq._true_color = value
+
+
+def verify_style_name(ctx, param, value):
+    import pygments.styles
+    import pygments.util
+
+    try:
+        pygments.styles.get_style_by_name(value)
+        return value
+    except pygments.util.ClassNotFound:
+        ctx.fail("invalid style name: {}".format(value))
+
 
 CTX_SETTINGS=dict(help_option_names=['-h','--help'])
 
@@ -69,6 +82,7 @@ CTX_SETTINGS=dict(help_option_names=['-h','--help'])
         help="output to a file, stdout by default")
 @click.option('-s','--style',
         type=str, default=os.environ.get('CONSOLEMD_STYLE', 'native'),
+        callback=verify_style_name, is_eager=True,
         help="what pygments style to use for coloring (def: native)")
 @click.argument('input', type=click.File('rb'), default=sys.stdin)
 @click.pass_context
