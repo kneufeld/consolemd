@@ -174,7 +174,7 @@ class Styler(object):
         color = eseq.fg
 
         level = 1 if obj.level is None else obj.level
-        per = 1.0 - .05 * (level-1)
+        per = 1.0 - .10 * (level-1)
         eseq.fg = reshade(color, per)
 
         return eseq
