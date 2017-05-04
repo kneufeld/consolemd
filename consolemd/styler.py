@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import copy
+
 import pygments.styles
 from pygments import token
 
@@ -168,10 +170,11 @@ class Styler(object):
         """
         do specialized styling for headers, make each heading level a bit darker
         """
-        eseq = self.style.entering('heading')
+        eseq = copy.deepcopy( self.style.entering('heading') )
         color = eseq.fg
 
         level = 1 if obj.level is None else obj.level
         per = 1.0 - .05 * (level-1)
         eseq.fg = reshade(color, per)
+
         return eseq
