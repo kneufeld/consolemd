@@ -3,6 +3,11 @@
 Here's what we all hope is an accurate list of things that have changed
 between versions.
 
+## v0.3.2
+
+* fixed several errors with unicode decoding
+* fixed bug where headers get continously darker
+
 ## v0.3.1
 
 * mainly doc updates, bug fixes and some refactoring
