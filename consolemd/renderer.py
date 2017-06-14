@@ -23,9 +23,9 @@ def debug_tag(obj, entering, match):
         return ''
 
     if entering:
-        return "<{}>".format(obj.t)
+        return u"<{}>".format(obj.t)
 
-    return "</{}>".format(obj.t)
+    return u"</{}>".format(obj.t)
 
 
 class Renderer(object):
@@ -72,7 +72,7 @@ class Renderer(object):
             out = handler(obj, entering)
             return out.encode('utf-8')
         except AttributeError:
-            logger.error( "unhandled ast type: {}".format(obj.t) )
+            logger.error( u"unhandled ast type: {}".format(obj.t) )
             #logger.debug( "entering: %s, %s", entering, pprint.pformat(obj.__dict__) )
             #assert(0)
 
@@ -105,7 +105,7 @@ class Renderer(object):
             for i, footnote in enumerate(self.footnotes):
                 i += 1
 
-                f = "[{}] - {}".format(i, footnote)
+                f = u"[{}] - {}".format(i, footnote)
                 formatted_footnotes.append(f)
 
             if formatted_footnotes:
@@ -129,7 +129,7 @@ class Renderer(object):
         return self.soft_wrap_char
 
     def thematic_break(self, obj, entering):
-        return "{}".format('-'*75)
+        return u"{}".format('-'*75)
 
     def emph(self, obj, entering):
         return ''
@@ -140,7 +140,7 @@ class Renderer(object):
     def heading(self, obj, entering):
         if entering:
             level = 1 if obj.level is None else obj.level
-            return "{} ".format('#'*level)
+            return u"{} ".format('#'*level)
         else:
             return endl
 
@@ -166,11 +166,11 @@ class Renderer(object):
                 key = tuple(obj.parent.sourcepos[0])
                 self.counters[key] += 1
                 num = self.counters[key]
-                bullet_char = "{}.".format(num)
+                bullet_char = u"{}.".format(num)
             else:
                 bullet_char = obj.list_data.get('bullet_char') or '*' # -,+,*
 
-            text = "{}{} ".format(' '*self.list_level*2, bullet_char)
+            text = u"{}{} ".format(' '*self.list_level*2, bullet_char)
             eseq = self.styler.style.entering('bullet')
 
             return self.styler.stylize( eseq, text )
@@ -206,14 +206,14 @@ class Renderer(object):
             self.footnotes.append(obj.destination)
             return ''
         else:
-            return "[{}]".format( len(self.footnotes) )
+            return u"[{}]".format( len(self.footnotes) )
 
     def image(self, obj, entering):
         if entering:
             self.footnotes.append(obj.destination)
             return '<image:'
         else:
-            return ">[{}]".format( len(self.footnotes) )
+            return u">[{}]".format( len(self.footnotes) )
 
     def html_inline(self, obj, entering):
         if obj.literal.lower() in ['<br>', '<br/>']:
