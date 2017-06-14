@@ -90,6 +90,7 @@ class Styler(object):
     no_closing_node = [
             'text', 'code', 'code_block',
             'thematic_break', 'softbreak', 'linebreak',
+            'html_inline', 'html_block',
             ]
 
     def __init__(self, stream, style_name):

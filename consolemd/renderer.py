@@ -17,12 +17,14 @@ logger = logging.getLogger('consolemd')
 
 endl = '\n'
 
+
 def debug_tag(obj, entering, match):
     if entering != match:
         return ''
 
     if entering:
         return "<{}>".format(obj.t)
+
     return "</{}>".format(obj.t)
 
 
@@ -67,12 +69,14 @@ class Renderer(object):
     def dispatch(self, obj, entering):
         try:
             handler = getattr(self, obj.t)
-            return handler(obj, entering)
-        except KeyError:
+            out = handler(obj, entering)
+            return out.encode('utf-8')
+        except AttributeError:
             logger.error( "unhandled ast type: {}".format(obj.t) )
-            logger.debug( "entering: %s,endl%s", entering, pprint.pformat(obj.__dict__) )
+            #logger.debug( "entering: %s, %s", entering, pprint.pformat(obj.__dict__) )
+            #assert(0)
 
-        return None
+        return ''
 
     def prefix(self, obj, entering):
         """
@@ -210,3 +214,17 @@ class Renderer(object):
             return '<image:'
         else:
             return ">[{}]".format( len(self.footnotes) )
+
+    def html_inline(self, obj, entering):
+        if obj.literal.lower() in ['<br>', '<br/>']:
+            return endl
+
+        return obj.literal
+
+    def html_block(self, obj, entering):
+        logger.warning("ignoring html_block")
+        return ''
+
+        renderer = Renderer(self.parser, self.style_name)
+        renderer.render( obj.literal[4:-3] )
+        return ''
