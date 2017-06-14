@@ -183,19 +183,28 @@ class Renderer(object):
 
     def code_block(self, obj, entering):
         # farm out code highlighting to pygments
-        lang = obj.info or 'text'
-        lexer = pygments.lexers.get_lexer_by_name(lang)
-        style = Style.get_style_by_name(self.style_name)
+        # note: unfortunately you can't set your own background color
+        # because after the first token the color codes would get reset
+
+        try:
+            lang  = obj.info or 'text'
+            lexer = pygments.lexers.get_lexer_by_name(lang)
+            style = Style.get_style_by_name(self.style_name)
+        except pygments.util.ClassNotFound: # lang is unknown to pygments
+            lang  = 'text'
+            lexer = pygments.lexers.get_lexer_by_name(lang)
+            style = Style.get_style_by_name(self.style_name)
 
         formatter_name = 'console16m' if _true_color else 'console'
         formatter = pygments.formatters.get_formatter_by_name(formatter_name, style=style)
 
-        highlighted = "{}{}".format(
-            pygments.highlight(obj.literal, lexer, formatter),
-            EscapeSequence.full_reset_string()
+        highlighted = u"{}{}".format(
+            pygments.highlight(obj.literal.encode('utf-8'), lexer, formatter).rstrip(),
+            EscapeSequence.full_reset_string() + endl,
             )
+        eseq = EscapeSequence(bg="#202020")
 
-        return highlighted
+        return self.styler.stylize( eseq, highlighted )
 
     def block_quote(self, obj, entering):
         # has text children
