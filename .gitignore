@@ -3,3 +3,4 @@
 consolemd.egg-info
 build
 dist
+*.pyc

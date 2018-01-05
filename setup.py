@@ -24,11 +24,12 @@ def pseudo_import( pkg_name ):
     lines = filter( lambda l: not l.startswith('import'), lines)
 
     code = '\n'.join(lines)
+    print(code)
 
     import imp
     module = imp.new_module(pkg_name)
 
-    exec code in module.__dict__
+    exec(code, module.__dict__)
     return module
 
 # trying to make this setup.py as generic as possible

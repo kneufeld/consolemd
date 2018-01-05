@@ -61,13 +61,13 @@ class Style(object):
 
         def fg(values):
             try:
-                return filter(lambda val: val.startswith('#'), values)[0]
+                return list(filter(lambda val: val.startswith('#'), values))[0]
             except IndexError:
                 return ''
 
         def bg(values):
             try:
-                bg = filter(lambda val: val.startswith('bg:'), values)[0]
+                bg = list(filter(lambda val: val.startswith('bg:'), values))[0]
                 return bg.split('bg:')[1]
             except IndexError:
                 return ''

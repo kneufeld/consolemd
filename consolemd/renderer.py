@@ -60,7 +60,7 @@ class Renderer(object):
                 logger.debug( debug_tag(obj, entering, True) )
 
                 out = self.dispatch(obj, entering)
-                stream.write(out)
+                stream.write(out.decode('utf-8'))
 
                 logger.debug( debug_tag(obj, entering, False) )
 
