@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 __title__        = 'consolemd'
-__version__      = '0.3.2'
+__version__      = '0.4.0'
 __author__       = 'Kurt Neufeld'
 __author_email__ = 'kneufeld@burgundywall.com'
 __license__      = 'MIT License'

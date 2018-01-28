@@ -3,6 +3,11 @@
 Here's what we all hope is an accurate list of things that have changed
 between versions.
 
+## v0.4.0
+
+* consolemd is now a python3 app, thanks to tek and kseistrup
+* added a few sanity tests
+
 ## v0.3.2
 
 * fixed several errors with unicode decoding
