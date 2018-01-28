@@ -2,16 +2,37 @@
 
 ConsoleMD renders markdown to the console.
 
+## Python 3
+
+Due to the inexorable tides, ConsoleMD is now Python3 only. If things happen
+to work in Python2 then super great, but that is no longer a requirement.
+
 ## Installation
 
-It's highly recommended to install ConsoleMD inside a virtual environment.
+It's highly recommended to install ConsoleMD inside a Python3 virtual environment.
 
 ```bash
+# activate your python venv
 pip install consolemd
 
 # you probably want to make consolemd more accessible so...
 cd ~/bin
 ln -s ~/path/to/venv/bin/consolemd consolemd
+```
+
+## Development
+
+If you'd like to hack on ConsoleMD and/or run some mediocre tests, then
+please do the following:
+
+```bash
+git clone https://github.com/kneufeld/consolemd.git
+cd consolemd
+
+# make a python3 virtual environment and activate it
+
+pip install -e .
+python setup.py test    # this will install some extra deps and run tests
 ```
 
 ## Usage
@@ -114,6 +135,10 @@ was made to show url links as a list at the end of the document.
 Unfortunately `commonmark-py` isn't very easy to use as a library so if
 any node types got missed then chaos may ensue. Please open a bug (or even
 better a pull request) so that `consolemd` can get patched up.
+
+## Contributing
+
+If you help out in any way make sure you add your name to `CONTRIBUTORS.md`.
 
 ## Example
 
