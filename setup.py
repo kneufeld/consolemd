@@ -45,6 +45,15 @@ setup(
         'commonmark<1.0',
     ],
 
+    setup_requires = [
+        'pytest-runner',
+    ],
+
+    tests_require = [
+        'pytest',
+        'pytest-console-scripts',
+    ],
+
     entry_points='''
         [console_scripts]
         consolemd=consolemd.cli:cli
