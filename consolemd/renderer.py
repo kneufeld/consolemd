@@ -60,7 +60,7 @@ class Renderer(object):
                 logger.debug( debug_tag(obj, entering, True) )
 
                 out = self.dispatch(obj, entering)
-                stream.write(out.decode('utf-8'))
+                stream.write(out)
 
                 logger.debug( debug_tag(obj, entering, False) )
 
@@ -70,7 +70,7 @@ class Renderer(object):
         try:
             handler = getattr(self, obj.t)
             out = handler(obj, entering)
-            return out.encode('utf-8')
+            return out
         except AttributeError:
             logger.error( u"unhandled ast type: {}".format(obj.t) )
             #logger.debug( "entering: %s, %s", entering, pprint.pformat(obj.__dict__) )
