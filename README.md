@@ -136,6 +136,8 @@ Unfortunately `commonmark-py` isn't very easy to use as a library so if
 any node types got missed then chaos may ensue. Please open a bug (or even
 better a pull request) so that `consolemd` can get patched up.
 
+Unicode is always fun: ȧƈƈḗƞŧḗḓ ŧḗẋŧ ƒǿř ŧḗşŧīƞɠ
+
 ## Contributing
 
 If you help out in any way make sure you add your name to `CONTRIBUTORS.md`.
