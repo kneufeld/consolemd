@@ -12,3 +12,4 @@ for some pretty graphs.
 * zmarouf, doc fix
 * tek, python3 migration
 * kseistrup, python3 migration
+* fboender, filed great bug report showing a bad deploy to pypi
