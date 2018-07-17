@@ -57,10 +57,17 @@ def verify_style_name(ctx, param, value):
     except pygments.util.ClassNotFound:
         ctx.fail("invalid style name: {}".format(value))
 
+def show_version(ctx, param, value):
+    from . import __version__
+    print(__version__)
+    sys.exit(0)
 
 CTX_SETTINGS=dict(help_option_names=['-h','--help'])
 
 @click.command(context_settings=CTX_SETTINGS)
+@click.option('--version',
+        is_flag=True, callback=show_version, is_eager=True,
+        help="show version and exit")
 @click.option('-d','--debug',
         is_flag=True, callback=change_loglevel, expose_value=True, is_eager=True,
         help="show extra info")
