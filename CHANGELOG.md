@@ -3,6 +3,11 @@
 Here's what we all hope is an accurate list of things that have changed
 between versions.
 
+## v0.4.1
+
+* using list comprehension instead of list() function
+* hopefully doing a proper deploy to pypi
+
 ## v0.4.0
 
 * consolemd is now a python3 app, thanks to tek and kseistrup
