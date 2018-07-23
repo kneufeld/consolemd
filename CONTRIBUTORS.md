@@ -13,3 +13,4 @@ for some pretty graphs.
 * tek, python3 migration
 * kseistrup, python3 migration
 * fboender, filed great bug report showing a bad deploy to pypi
+* vext01, pointed out version bug

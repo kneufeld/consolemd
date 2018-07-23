@@ -3,6 +3,10 @@
 Here's what we all hope is an accurate list of things that have changed
 between versions.
 
+## v0.4.3
+
+* fixed `--version` option which always ran
+
 ## v0.4.2
 
 * adding `--version` option to command line
