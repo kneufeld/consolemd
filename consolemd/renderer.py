@@ -2,7 +2,7 @@
 
 import sys
 
-import CommonMark
+import commonmark
 import pygments
 import pygments.lexers
 import pygments.styles
@@ -32,7 +32,7 @@ class Renderer(object):
 
     def __init__(self, parser=None, style_name=None):
         if parser is None:
-            parser = CommonMark.Parser()
+            parser = commonmark.Parser()
 
         if style_name is None:
             style_name = 'native'
