@@ -14,3 +14,4 @@ for some pretty graphs.
 * kseistrup, python3 migration
 * fboender, filed great bug report showing a bad deploy to pypi
 * vext01, pointed out version bug
+* ap8322, changed setup.py from CommonMark to commonmark
