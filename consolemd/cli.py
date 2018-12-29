@@ -6,7 +6,8 @@ highlighting the markdown. The difference being that the control
 characters are stripped.
 """
 
-import os, sys
+import os
+import sys
 import click
 
 import logging
