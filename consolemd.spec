@@ -5,6 +5,11 @@
 
 block_cipher = None
 
+def platform():
+    import platform
+    name = "%s-%s" % (platform.system(), platform.machine())
+    return name.lower()
+
 def entrypoint(dist, group, name, **kwargs):
     import pkg_resources
 
@@ -50,7 +55,7 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='consolemd',
+          name='consolemd-%s' % platform(),
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,

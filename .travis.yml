@@ -17,7 +17,7 @@ deploy:
   provider: releases
   api_key:
     secure: cr2jnPXoAawuZDrunlAwmLf6sO0DLqVlH8aroUaMIYw9zswN21kmMRw2HPQbR3SHbdVQRoqXyslkwPsxeg1RwDyCcf/otXXKXlk1hCka/jlTWx+nW2/gKfb33CkV9OqoMAJvmFr+SfxIeLGOE6mvXyYIblMS4HKX3NKM7+xXuJ0VqprXpTm6vIjlUDOUKPaFOO5re5uHGn2kRehp3AlawAhqQYAC9wxMk5NsA/sBTCTape69rq1OmQ78CC0QvUIKvuWiu8XRMmrijasTp+07fR67SPNXU6LaOSMnSJ93F9enmff7h9JTVuO72+ba1ulCU2Vmc99nT+7B7JWnZ6eRk0LNkyAdMmAETOlUQZWl+/tdIPgB/XNSaLY0BiEFtQc3amkkK9sFVTGk0ZR4NRQXCsqXQJReRjXwZ/ZnOvRfV13FNrz60Z6sbiRsCVDAK60lJ9eooYqyLSos+WOBK8RQOkcCl445n2XPkpB1aY8cYsRU6jlI2NsTuXi+fS6EhLhVFgzTiGKq3x+wlnasDezzN4DfUDhW94OAMHaxr65agOGbnQ0vZf9utCXqgO/8YBBxkmRssc79NydDodV8sy0VOgv6kJhRpZjq/rmeB0HYk0nlA5ho9aJXvQNIPqHGuZeNABQwAW4uMWjcwtZpGyT0GYikSdWrIrQLzJL9UVFUQYI=
-  file: 'dist/consolemd'
+  file: 'dist/consolemd-linux-x86_64'
   skip_cleanup: true
   on:
     # repo: kneufeld/consolemd
