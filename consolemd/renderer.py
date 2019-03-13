@@ -6,6 +6,7 @@ import pygments.lexers
 import pygments.styles
 import pygments.formatters
 import pprint
+import textwrap
 
 from .styler import Styler, Style
 from .escapeseq import EscapeSequence, _true_color
@@ -26,7 +27,7 @@ def debug_tag(obj, entering, match):
     return u"</{}>".format(obj.t)
 
 
-class Renderer(object):
+class Renderer:
 
     def __init__(self, parser=None, style_name=None):
         if parser is None:
@@ -42,8 +43,9 @@ class Renderer(object):
         self.footnotes  = []
 
     def render(self, md, **kw):
-        stream          = kw.get('output', sys.stdout)
-        self.soft_wrap  = kw.get('soft_wrap', True)
+        stream              = kw.get('output', sys.stdout)
+        self.width          = kw.get('width', None)
+        self.soft_wrap      = kw.get('soft_wrap', True)
         self.soft_wrap_char = endl if self.soft_wrap else ' '
 
         self.styler = Styler( stream, self.style_name)
@@ -118,6 +120,11 @@ class Renderer(object):
             return endl
 
     def text(self, obj, entering):
+        if self.width:
+            text = obj.literal
+            lines = textwrap.wrap(text, self.width) #, drop_whitespace=True, replace_whitespace=True)
+            return '\n'.join(lines) + ' '
+
         return obj.literal
 
     def linebreak(self, obj, entering):

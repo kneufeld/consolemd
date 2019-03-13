@@ -31,7 +31,7 @@ cd consolemd
 
 # make a python3 virtual environment and activate it
 
-pip install -e .
+pip install -e .[test]
 python setup.py test    # this will install some extra deps and run tests
 ```
 
@@ -54,6 +54,11 @@ run `consolemd` with `--no-true-color` or set environment variable
 
 If you like really long lines that wrap at terminal edge then
 use `--no-soft-wrap` or set `CONSOLEMD_WRAP=0`.
+
+To specify a max line width, then add `-w N` to the command line or
+export variable `CONSOLEMD_WIDTH` or `MANWIDTH`. Note that this feature
+is pretty hacky and lines with internal formatting will likely end up
+longer than the desired width.
 
 A current at-time-of-writing list of pygment styles is the following:
 

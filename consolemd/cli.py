@@ -46,6 +46,30 @@ def change_loglevel(ctx, param, value):
             handler.setLevel(logging.WARNING)
 
 
+def get_width(ctx, param, value):
+    min_width = 20
+    width = None
+
+    if value:
+        width = value
+    else:
+        # if one of these env var is set, use it
+        for key in ['CONSOLEMD_WIDTH', 'MANWIDTH']:
+            value = os.environ.get(key, None)
+            if value is not None:
+                width = int(value)
+                logger.debug("using envvar %s to set width to %d", key, width)
+                break
+
+    if width is not None and width < min_width:
+        logger.warning("overriding width to %d", min_width)
+        width = min_width
+
+    if width is not None:
+        logger.debug("using width of %d", width)
+
+    return width
+
 # this is a click related function, not logging per se, hence it lives here
 def enable_color(ctx, param, value):
     if value is False:
@@ -97,7 +121,10 @@ CTX_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.option('--soft-wrap/--no-soft-wrap',
         default=os.environ.get('CONSOLEMD_WRAP', True),
         help="output lines wrap along with source lines")
-@click.option('-o','--output',
+@click.option('-w', '--width',
+        callback=get_width, expose_value=True, is_eager=False, type=int,
+        help="format text to given width, othewise use soft-wrap")
+@click.option('-o', '--output',
         type=click.File('w'), default=sys.stdout,
         help="output to a file, stdout by default")
 @click.option('-s', '--style',
