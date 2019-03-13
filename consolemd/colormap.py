@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 contains color utility functions and xterm color data
 """

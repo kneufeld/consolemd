@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from consolemd.colormap import ColorMap, to_rgb, ansicolors
 
 _true_color = True

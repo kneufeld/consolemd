@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 __title__        = 'consolemd'
 __version__      = '0.4.6'
 __author__       = 'Kurt Neufeld'
