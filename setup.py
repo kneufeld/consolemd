@@ -39,20 +39,19 @@ setup(
     packages=[pkg_name],
 
     install_requires=[
-        'click<7.0',
-        'pygments<3.0',
-        'setproctitle<1.2',
-        'commonmark<1.0',
+        'click',
+        'pygments',
+        'setproctitle',
+        'commonmark',
     ],
 
-    setup_requires = [
-        'pytest-runner',
-    ],
-
-    tests_require = [
-        'pytest',
-        'pytest-console-scripts',
-    ],
+    extras_require = {
+        'test': [
+            'pytest',
+            'pytest-runner',
+            'pytest-console-scripts',
+        ],
+    },
 
     entry_points='''
         [console_scripts]
