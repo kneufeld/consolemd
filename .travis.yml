@@ -4,11 +4,11 @@ python:
   - "3.6"
 
 install:
-  - pip install -e .
-  - pip install pytest pytest-console-scripts pyinstaller
+  - pip install -e .[test]
 
 script:
   - pytest
+  - pip install pyinstaller
   - pyinstaller --onefile consolemd.spec
   # sanity test of consolemd
   - consolemd --version

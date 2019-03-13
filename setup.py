@@ -47,9 +47,9 @@ setup(
 
     extras_require = {
         'test': [
-            'pytest',
-            'pytest-runner',
-            'pytest-console-scripts',
+            'pytest>=4.3.1',
+            'pytest-runner>=4.4',
+            'pytest-console-scripts>=0.1.9',
         ],
     },
 
