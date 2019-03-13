@@ -75,16 +75,16 @@ def show_version(ctx, param, value):
     click.echo(__version__)
     ctx.exit()
 
-CTX_SETTINGS=dict(help_option_names=['-h','--help'])
+CTX_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 @click.command(context_settings=CTX_SETTINGS)
 @click.option('--version',
         is_flag=True, callback=show_version, expose_value=False, is_eager=True,
         help="show version and exit")
-@click.option('-d','--debug',
+@click.option('-d', '--debug',
         is_flag=True, callback=change_loglevel, expose_value=True, is_eager=True,
         help="show extra info")
-@click.option('-q','--quiet',
+@click.option('-q', '--quiet',
         is_flag=True, callback=change_loglevel, expose_value=True, is_eager=True,
         help="show less info")
 @click.option('--color/--no-color',
@@ -100,7 +100,7 @@ CTX_SETTINGS=dict(help_option_names=['-h','--help'])
 @click.option('-o','--output',
         type=click.File('w'), default=sys.stdout,
         help="output to a file, stdout by default")
-@click.option('-s','--style',
+@click.option('-s', '--style',
         type=str, default=os.environ.get('CONSOLEMD_STYLE', 'native'),
         callback=verify_style_name, is_eager=True,
         help="what pygments style to use for coloring (def: native)")

@@ -127,7 +127,7 @@ class Renderer(object):
         return self.soft_wrap_char
 
     def thematic_break(self, obj, entering):
-        return u"{}".format('-'*75)
+        return u"{}".format('-' * 75)
 
     def emph(self, obj, entering):
         return ''
@@ -138,7 +138,7 @@ class Renderer(object):
     def heading(self, obj, entering):
         if entering:
             level = 1 if obj.level is None else obj.level
-            return u"{} ".format('#'*level)
+            return u"{} ".format('#' * level)
         else:
             return endl
 
@@ -168,7 +168,7 @@ class Renderer(object):
             else:
                 bullet_char = obj.list_data.get('bullet_char') or '*' # -,+,*
 
-            text = u"{}{} ".format(' '*self.list_level*2, bullet_char)
+            text = u"{}{} ".format(' ' * self.list_level * 2, bullet_char)
             eseq = self.styler.style.entering('bullet')
 
             return self.styler.stylize( eseq, text )
