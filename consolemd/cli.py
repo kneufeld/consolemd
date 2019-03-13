@@ -26,17 +26,29 @@ def rename_proc( name ):
 def change_loglevel(ctx, param, value):
     # 'stdout' is the name of a handler defined in .logger
 
+    def get_handler(name):
+        handlers = [
+            h for h in logger.handlers
+            if h.get_name() == name
+        ]
+        if handlers:
+            return handlers[0]
+
     if param.name == 'debug' and value:
-        logger.setLevel( logging.DEBUG )
-        filter( lambda h: h.get_name() == 'stderr', logger.handlers )[0].setLevel( logging.DEBUG )
+        logger.setLevel(logging.DEBUG)
+        handler = get_handler('stderr')
+        if handler:
+            handler.setLevel(logging.DEBUG)
     elif param.name == 'quiet' and value:
-        logger.setLevel( logging.WARNING )
-        filter( lambda h: h.get_name() == 'stderr', logger.handlers )[0].setLevel( logging.WARNING )
+        logger.setLevel(logging.WARNING)
+        handler = get_handler('stderr')
+        if handler:
+            handler.setLevel(logging.WARNING)
 
 
 # this is a click related function, not logging per se, hence it lives here
 def enable_color(ctx, param, value):
-    if value == False:
+    if value is False:
         for h in logger.handlers:
             h._enabled = False
 
