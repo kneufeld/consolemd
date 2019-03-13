@@ -3,6 +3,11 @@
 Here's what we all hope is an accurate list of things that have changed
 between versions.
 
+## v0.5.0
+
+* adding --width flag to command line
+* added some more tests
+
 ## v0.4.5
 
 * attempting to freeze with pyinstaller

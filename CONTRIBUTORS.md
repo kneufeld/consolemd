@@ -16,3 +16,4 @@ for some pretty graphs.
 * vext01, pointed out version bug
 * ap8322, changed setup.py from CommonMark to commonmark
 * pmiddend, asked about click 7, prompted pyinstaller freezing
+* igalic, idea for --width
