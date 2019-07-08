@@ -1,12 +1,12 @@
 import sys
+import re
+import textwrap
 
 import commonmark
 import pygments
 import pygments.lexers
 import pygments.styles
 import pygments.formatters
-import pprint
-import textwrap
 
 from .styler import Styler, Style
 from .escapeseq import EscapeSequence, _true_color
@@ -43,17 +43,18 @@ class Renderer:
         self.counters   = {}
         self.footnotes  = []
 
-    def render(self, md, **kw):
+    def render(self, text, **kw):
         stream              = kw.get('output', sys.stdout)
         self.width          = kw.get('width', None)
         self.soft_wrap      = kw.get('soft_wrap', True)
         self.soft_wrap_char = endl if self.soft_wrap else ' '
 
-        self.styler = Styler( stream, self.style_name)
-        ast = self.parser.parse( md )
+        text = self.wrap_paragraphs(text)
+
+        self.styler = Styler(stream, self.style_name)
+        ast = self.parser.parse(text)
 
         for obj, entering in ast.walker():
-
             with self.styler.cm(obj, entering):
                 prefix = self.prefix(obj, entering)
                 stream.write(prefix)
@@ -74,10 +75,28 @@ class Renderer:
             return out
         except AttributeError:
             logger.error(u"unhandled ast type: {}".format(obj.t))
-            #logger.debug("entering: %s, %s", entering, pprint.pformat(obj.__dict__))
-            #assert(0)
 
         return ''
+
+    def wrap_paragraphs(self, text):
+        """
+        unfortunately textwrap expects to work on paragraphs, not entire
+        documents. If the user has specified a width then we need to wrap
+        the paragraphs individually before we parse the document.
+        """
+        if not self.width:
+            return text
+
+        para_edge = re.compile(r"(\n\s*\n)", re.MULTILINE)
+        paragraphs = para_edge.split(text)
+
+        wrapped_lines = []
+        for para in paragraphs:
+            wrapped_lines.append(
+                textwrap.fill(para, width=self.width)
+            )
+
+        return '\n'.join(wrapped_lines)
 
     def prefix(self, obj, entering):
         """
@@ -121,11 +140,6 @@ class Renderer:
             return endl
 
     def text(self, obj, entering):
-        if self.width:
-            text = obj.literal
-            lines = textwrap.wrap(text, self.width) #, drop_whitespace=True, replace_whitespace=True)
-            return '\n'.join(lines) + ' '
-
         return obj.literal
 
     def linebreak(self, obj, entering):
