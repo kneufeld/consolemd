@@ -135,7 +135,8 @@ class Renderer:
         return self.soft_wrap_char
 
     def thematic_break(self, obj, entering):
-        return u"{}".format('-' * 75)
+        width = self.width if self.width else 75
+        return u"{}".format('—' * width) + endl
 
     def emph(self, obj, entering):
         return ''
