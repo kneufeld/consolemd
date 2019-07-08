@@ -3,6 +3,11 @@
 Here's what we all hope is an accurate list of things that have changed
 between versions.
 
+## v0.5.1
+
+* fixes wrapping (and extra spaces) when width specified on command line
+* thematic break now uses unicode wide dash and obeys width
+
 ## v0.5.0
 
 * adding --width flag to command line
