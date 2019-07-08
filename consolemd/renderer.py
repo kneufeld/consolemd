@@ -30,6 +30,7 @@ def debug_tag(obj, entering, match):
 class Renderer:
 
     def __init__(self, parser=None, style_name=None):
+
         if parser is None:
             parser = commonmark.Parser()
 
@@ -57,12 +58,12 @@ class Renderer:
                 prefix = self.prefix(obj, entering)
                 stream.write(prefix)
 
-                logger.debug( debug_tag(obj, entering, True) )
+                logger.debug(debug_tag(obj, entering, True))
 
                 out = self.dispatch(obj, entering)
                 stream.write(out)
 
-                logger.debug( debug_tag(obj, entering, False) )
+                logger.debug(debug_tag(obj, entering, False))
 
                 stream.flush()
 
@@ -72,8 +73,8 @@ class Renderer:
             out = handler(obj, entering)
             return out
         except AttributeError:
-            logger.error( u"unhandled ast type: {}".format(obj.t) )
-            #logger.debug( "entering: %s, %s", entering, pprint.pformat(obj.__dict__) )
+            logger.error(u"unhandled ast type: {}".format(obj.t))
+            #logger.debug("entering: %s, %s", entering, pprint.pformat(obj.__dict__))
             #assert(0)
 
         return ''
@@ -178,7 +179,7 @@ class Renderer:
             text = u"{}{} ".format(' ' * self.list_level * 2, bullet_char)
             eseq = self.styler.style.entering('bullet')
 
-            return self.styler.stylize( eseq, text )
+            return self.styler.stylize(eseq, text)
 
         return ''
 
@@ -206,10 +207,10 @@ class Renderer:
         highlighted = u"{}{}".format(
             pygments.highlight(obj.literal.encode('utf-8'), lexer, formatter).rstrip(),
             EscapeSequence.full_reset_string() + endl,
-            )
+        )
         eseq = EscapeSequence(bg="#202020")
 
-        return self.styler.stylize( eseq, highlighted )
+        return self.styler.stylize(eseq, highlighted)
 
     def block_quote(self, obj, entering):
         # has text children
@@ -220,14 +221,14 @@ class Renderer:
             self.footnotes.append(obj.destination)
             return ''
         else:
-            return u"[{}]".format( len(self.footnotes) )
+            return u"[{}]".format(len(self.footnotes))
 
     def image(self, obj, entering):
         if entering:
             self.footnotes.append(obj.destination)
             return '<image:'
         else:
-            return u">[{}]".format( len(self.footnotes) )
+            return u">[{}]".format(len(self.footnotes))
 
     def html_inline(self, obj, entering):
         if obj.literal.lower() in ['<br>', '<br/>']:
@@ -240,5 +241,5 @@ class Renderer:
         return ''
 
         renderer = Renderer(self.parser, self.style_name)
-        renderer.render( obj.literal[4:-3] )
+        renderer.render(obj.literal[4:-3])
         return ''
